@@ -2,6 +2,7 @@ import utils
 import login_system as login_sys
 import menu_system as menu_sys
 import psycopg2
+from access import *
 from sshtunnel import SSHTunnelForwarder
 
 
@@ -41,22 +42,22 @@ def run():
                     option = input('>')
                     if option.strip() == '1':
                         pass
-                        #logged_in_username=login(connect)
+                        logged_in_username=login(connect)
                         #insert entrance to the command menu here
                     elif option.strip() == '2':
                         pass
-                        #register(connect)
+                        register(connect)
                     elif option.strip() == '3':
                         pass
-                        #quit(connect)
+                        quit(connect)
                     else:
                         print('invalid command. Please Try again')
             except Exception as e:
                 print(str(e))
-                #quit_program(connect)
+                quit_program(connect)
             finally:
                 pass
-                #quit_program(connect)
+                quit_program(connect)
 
     # logged_in = start_menu()
     # if logged_in[0]:
