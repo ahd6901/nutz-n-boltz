@@ -1,3 +1,6 @@
+import os
+from logging import root
+
 import utils
 import login_system as login_sys
 import menu_system as menu_sys
@@ -22,7 +25,16 @@ def connection(server):
     return conn
 
 
-#Entrance to the program
+def exec_schema_file(connect, path):
+    full_path = os.path.join(os.path.dirname(__file__), f'{path}')
+    cur = connect.cursor()
+    with open(full_path, 'r') as file:
+
+        cur.execute(file.read())
+    connect.commit()
+
+
+# Entrance to the program
 def run():
     with open('credentials.txt') as f:
         global authenticator
@@ -34,6 +46,8 @@ def run():
             print("SSH tunnel established")
             try:
                 connect = connection(server)
+                exec_schema_file(connect, 'src\schema.sql')    #Keeps track of DB design
+
                 print("Welcome! Please select one of the following options:")
                 while True:
                     print("1: Login to account")
@@ -42,8 +56,8 @@ def run():
                     option = input('>')
                     if option.strip() == '1':
                         pass
-                        logged_in_username=login(connect)
-                        #insert entrance to the command menu here
+                        logged_in_username = login(connect)
+                        # insert entrance to the command menu here
                     elif option.strip() == '2':
                         pass
                         register(connect)

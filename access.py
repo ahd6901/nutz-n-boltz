@@ -26,15 +26,11 @@ def register(connect):
     password = get_input(cursor, 'password', False, '')
     email = get_input(cursor, 'email', True, 'email')
     now = date.today()
-    insert_query = "INSERT INTO users (username, email,password, date_created, last_accessed, first_name, last_name) VALUES ('{0}', '{1}', '{2}',DATE('{3}'), DATE('{4}'), '{5}', '{6}');".format(
-        username, email, password, now.strftime('%Y-%m-%d'),
-        now.strftime('%Y-%m-%d'), first_name, last_name)
-
-    cursor.execute(insert_query)
+    cursor.execute("CALL addUser('{0}','{1}','{2}','{3}','{4}','{5}','{6}');".format(username, password, email, first_name, last_name, now.strftime('%Y-%m-%d'),now.strftime('%Y-%m-%d')))
     connect.commit()
-
-    cursor.execute('SELECT * FROM users;')
-    print(str(cursor.fetchall()))
+    cursor.execute("SELECT user_id FROM users WHERE username='{0}';".format(username))
+    user_id= cursor.fetchone()[0]
+    print('(for testing) user id is:'+ str(user_id))
     print("Signup successful!")
 
 
