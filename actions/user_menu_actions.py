@@ -10,5 +10,6 @@ def action_input_map():
   }
   return input_map
 
-def show_stats():
+def show_stats(args):
   print('Action: Show Stats')
+  print(args)

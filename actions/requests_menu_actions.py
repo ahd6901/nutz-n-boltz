@@ -11,8 +11,10 @@ def action_input_map():
   }
   return input_map
 
-def respond_to_request(request, response):
+def respond_to_request(args):
   print('Action: Respond to Request')
+  print(args)
 
-def request_tool(tool, user, duration):
+def request_tool(args):
   print('Action: Request Tool')
+  print(args)

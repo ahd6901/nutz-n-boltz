@@ -10,7 +10,7 @@ from sshtunnel import SSHTunnelForwarder
 
 
 # Establish connection to db
-def connection(server):
+def connection(server, authenticator):
     server.start()
     params = {
         'database': 'p320_13',
@@ -36,51 +36,26 @@ def exec_schema_file(connect, path):
 
 # Entrance to the program
 def run():
-    with open('credentials.txt') as f:
-        global authenticator
-        authenticator = [line.strip() for line in f]
-        with SSHTunnelForwarder(('starbug.cs.rit.edu', 22),
-                                ssh_username=authenticator[0],
-                                ssh_password=authenticator[1],
-                                remote_bind_address=('localhost', 5432)) as server:
-            print("SSH tunnel established")
-            try:
-                connect = connection(server)
-                exec_schema_file(connect, 'src\schema.sql')    #Keeps track of DB design
+    # with open('credentials.txt') as f:
+    #     authenticator = [line.strip() for line in f]
+    #     with SSHTunnelForwarder(('starbug.cs.rit.edu', 22),
+    #                             ssh_username=authenticator[0],
+    #                             ssh_password=authenticator[1],
+    #                             remote_bind_address=('localhost', 5432)) as server:
+    #         print("SSH tunnel established")
+    #         try:
+    #             connect = connection(server, authenticator)
+    #             # exec_schema_file(connect, 'src\schema.sql')    #Keeps track of DB design
+    #         except Exception as e:
+    #             print(str(e))
 
-                print("Welcome! Please select one of the following options:")
-                while True:
-                    print("1: Login to account")
-                    print("2: Create new account")
-                    print("3: Exit the Program")
-                    option = input('>')
-                    if option.strip() == '1':
-                        pass
-                        logged_in_username = login(connect)
-                        # insert entrance to the command menu here
-                    elif option.strip() == '2':
-                        pass
-                        register(connect)
-                    elif option.strip() == '3':
-                        pass
-                        quit(connect)
-                    else:
-                        print('invalid command. Please Try again')
-            except Exception as e:
-                print(str(e))
-                quit_program(connect)
-            finally:
-                pass
-                quit_program(connect)
-
-    # logged_in = start_menu()
-    # if logged_in[0]:
-    #     user_menu_system(logged_in[1])
+    logged_in = start_menu()
+    if logged_in[0]:
+        user_menu_system(logged_in[1])
 
 
 def start_menu():
     utils.clear_console()
-
     # User input
     user_input = start_menu_input()
     logged_in = login_sys.login_system_input(user_input)
@@ -108,7 +83,7 @@ def start_menu_input(error_message=""):
     if (user_input in valid_inputs):
         return user_input
     else:
-        return start_menu_input(f'Invalid input: "{user_input}"')
+        return start_menu_input(f'Invalid Input: "{user_input}"')
 
 
 def user_menu_system(username):
@@ -140,24 +115,29 @@ def user_menu_system(username):
             'display menus': menu_sys.display_menus,
             'display actions': current_menu.display_actions
         }
-        user_input = input(":: ").strip().lower()
-        if (user_input == 'logout'):
+        user_input = str(input(':: ')).strip().lower().split()
+
+        if (len(user_input) == 1 and user_input[0] == 'logout'):
             logout = True
             break
-        utils.clear_console()
 
-        if (user_input in goto_actions_map.keys()):
-            current_menu = goto_actions_map.get(user_input)
-            current_menu.display_menu()
-        elif (user_input in menu_actions_map.keys()):
-            current_menu.display_menu()
-            menu_actions_map.get(user_input)()
-        elif (user_input in current_menu.get_actions()):
-            current_menu.display_menu()
-            current_menu.get_action(user_input)()
+        utils.clear_console()
+        if (len(user_input) > 0):
+            if (user_input[0] in current_menu.get_actions()):
+                current_menu.display_menu()
+                current_menu.get_action(user_input[0])(user_input)
+            elif (len(user_input) == 2 and f'{user_input[0]} {user_input[1]}' in menu_actions_map.keys()):
+                current_menu.display_menu()
+                menu_actions_map.get(f'{user_input[0]} {user_input[1]}')()
+            elif (len(user_input) == 3 and f'{user_input[0]} {user_input[1]} {user_input[2]}' in goto_actions_map.keys()):
+                current_menu = goto_actions_map.get(f'{user_input[0]} {user_input[1]} {user_input[2]}')
+                current_menu.display_menu()
+            else:
+                current_menu.display_menu()
+                print("Invalid User Input")
         else:
             current_menu.display_menu()
-            print("Invalid user input")
+            print("Invalid User Input")
 
 
 if __name__ == '__main__':

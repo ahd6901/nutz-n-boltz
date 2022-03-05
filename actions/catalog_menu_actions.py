@@ -16,23 +16,30 @@ def action_input_map():
   }
   return input_map
 
-def add_tool():
+def add_tool(args):
   print('Action: Add Tool')
+  print(args)
 
-def manage_categories():
+def manage_categories(args):
   print('Action: Manage Categories')
+  print(args)
 
-def sort_tools():
+def sort_tools(args):
   print('Action: Sort Tools')
+  print(args)
 
-def remove_tool():
+def remove_tool(args):
   print('Action: Remove Tool')
+  print(args)
 
-def update_tool():
+def update_tool(args):
   print('Action: Update Tool')
+  print(args)
 
-def search_tool():
+def search_tool(args):
   print('Action: Search Tool')
+  print(args)
 
-def return_tool():
+def return_tool(args):
   print('Action: Return Tool')
+  print(args)

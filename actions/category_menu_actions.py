@@ -12,11 +12,14 @@ def action_input_map():
   }
   return input_map
 
-def create_category():
+def create_category(args):
   print('Action: Create Category')
+  print(args)
 
-def remove_category():
+def remove_category(args):
   print('Action: Remove Category')
+  print(args)
 
-def display_categories():
+def display_categories(args):
   print('Action: Display Categories')
+  print(args)
