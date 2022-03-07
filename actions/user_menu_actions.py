@@ -1,5 +1,6 @@
 def action_input_map():
   input_map = {
+    'logout': 'logout',
     'display menus': 'display menus',
     'display actions': 'display actions',
     'goto user menu': 'goto user menu',
