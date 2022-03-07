@@ -7,19 +7,28 @@ def action_input_map():
     'goto category menu': 'goto category menu',
     'goto catalog menu': 'goto catalog menu',
     'create_category': 'create_category',
-    'remove_category': 'remove_category',
-    'display_categories': 'display_categories'
+    'remove_category': 'remove_category <category_name>',
+    'display_categories': 'display_categories',
+    'add_category_to_tool': 'add_category_to_tool'
   }
   return input_map
 
 def create_category(args):
+  # REQ:3
   print('Action: Create Category')
   print(args)
 
 def remove_category(args):
+  # REQ:3
   print('Action: Remove Category')
   print(args)
 
 def display_categories(args):
+  # REQ:3
   print('Action: Display Categories')
+  print(args)
+
+def add_category_to_tool(args):
+  # REQ:3
+  print('Action: Add Category To Tool')
   print(args)
