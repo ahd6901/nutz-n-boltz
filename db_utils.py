@@ -28,7 +28,7 @@ def exec_schema_file(path):
     cur = conn.cursor()
     with open(full_path, 'r') as file:
         cur.execute(file.read())
-    connect.commit()
+    conn.commit()
 
 
 def exec_get_one(sql, args={}):

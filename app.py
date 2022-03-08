@@ -9,6 +9,7 @@ from access import *
 
 
 def run():
+    exec_schema_file('src\schema.sql')
     logged_in = start_menu()
     if logged_in[0]:
         user_menu_system(logged_in[1])
