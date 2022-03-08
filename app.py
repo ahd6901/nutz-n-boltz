@@ -99,12 +99,11 @@ def user_menu_system(username):
         else:
             current_menu.display_menu()
             print("Invalid User Input")
+    exit_program()
 
 
 def exit_program():
     print('program closes')
-    connect.close()
-    exit()
 
 
 if __name__ == '__main__':

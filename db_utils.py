@@ -24,7 +24,8 @@ def connect():
 
 def exec_schema_file(path):
     full_path = os.path.join(os.path.dirname(__file__), f'{path}')
-    cur = connect.cursor()
+    conn = connect()
+    cur = conn.cursor()
     with open(full_path, 'r') as file:
         cur.execute(file.read())
     connect.commit()

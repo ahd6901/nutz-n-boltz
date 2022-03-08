@@ -26,7 +26,7 @@ def login(error_message=''):
 
     # User input
     username = input('Enter your username: ').strip()
-    password = input('Enter your password: ').strip()
+    password = getpass('Enter your password: ').strip()
     valid_login = False
     # Check if valid login
     result = exec_get_one(

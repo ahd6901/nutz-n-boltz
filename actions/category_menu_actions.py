@@ -1,4 +1,6 @@
-from db_utils import *
+from traceback import print_tb
+from db_utils import exec_get_one, exec_get_all, exec_commit
+
 def action_input_map():
   input_map = {
     'logout': 'logout',
@@ -19,6 +21,8 @@ def create_category(args):
   # REQ:3
   print('Action: Create Category')
   print(args)
+  tuples = exec_get_all('SELECT * FROM users')
+  print(tuples)
 
 def remove_category(args):
   # REQ:3
@@ -28,6 +32,7 @@ def remove_category(args):
 def display_categories(args):
   # REQ:3
   print('Action: Display Categories')
+  
   print(args)
 
 def add_category_to_tool(args):
