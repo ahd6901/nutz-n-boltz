@@ -5,7 +5,7 @@ from datetime import date
 
 
 def login_system_input(user_input):
-    logged_in = False
+    logged_in = [False, None]
 
     if user_input == "login" or user_input == "l":
         logged_in = login()
@@ -27,7 +27,7 @@ def login(error_message=''):
     # User input
     username = input('Enter your username: ').strip()
     password = input('Enter your password: ').strip()
-
+    valid_login = False
     # Check if valid login
     result = exec_get_one(
                 "SELECT COUNT(username) FROM users WHERE username='{0}' AND password='{1}'".format(username, password))
