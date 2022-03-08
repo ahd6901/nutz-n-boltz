@@ -2,53 +2,14 @@ import os
 from logging import root
 
 import utils
+from db_utils import *
 import login_system as login_sys
 import menu_system as menu_sys
-import psycopg2
 from access import *
-from sshtunnel import SSHTunnelForwarder
 
 
-# Establish connection to db
-def connection(server, authenticator):
-    server.start()
-    params = {
-        'database': 'p320_13',
-        'user': authenticator[0],
-        'password': authenticator[1],
-        'host': 'localhost',
-        'port': server.local_bind_port,
-        'options': f'-c search_path=p320_13',
-    }
-    conn = psycopg2.connect(**params)
-    print("Database connection established")
-    return conn
 
-
-def exec_schema_file(connect, path):
-    full_path = os.path.join(os.path.dirname(__file__), f'{path}')
-    cur = connect.cursor()
-    with open(full_path, 'r') as file:
-
-        cur.execute(file.read())
-    connect.commit()
-
-
-# Entrance to the program
 def run():
-    # with open('credentials.txt') as f:
-    #     authenticator = [line.strip() for line in f]
-    #     with SSHTunnelForwarder(('starbug.cs.rit.edu', 22),
-    #                             ssh_username=authenticator[0],
-    #                             ssh_password=authenticator[1],
-    #                             remote_bind_address=('localhost', 5432)) as server:
-    #         print("SSH tunnel established")
-    #         try:
-    #             connect = connection(server, authenticator)
-    #             # exec_schema_file(connect, 'src\schema.sql')    #Keeps track of DB design
-    #         except Exception as e:
-    #             print(str(e))
-
     logged_in = start_menu()
     if logged_in[0]:
         user_menu_system(logged_in[1])
@@ -56,7 +17,6 @@ def run():
 
 def start_menu():
     utils.clear_console()
-    # User input
     user_input = start_menu_input()
     logged_in = login_sys.login_system_input(user_input)
     return logged_in

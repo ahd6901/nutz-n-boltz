@@ -2,7 +2,8 @@ import os
 import re
 
 def clear_console():
-  os.system('clear')
+  pass
+  #os.system('clear')
 
 
 def validate_email_format(email):
