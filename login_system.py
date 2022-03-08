@@ -14,7 +14,6 @@ def login_system_input(user_input):
         account_created = register()
         if account_created:
             logged_in = login("Successfully registered")
-
     return logged_in
 
 def login(error_message=''):
@@ -41,6 +40,7 @@ def login(error_message=''):
     if not valid_login:
         return login('Invalid login')
     return [valid_login, username]
+
 
 
 def register(error_message=''):

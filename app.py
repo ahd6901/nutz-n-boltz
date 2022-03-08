@@ -8,7 +8,6 @@ import menu_system as menu_sys
 from access import *
 
 
-
 def run():
     logged_in = start_menu()
     if logged_in[0]:
@@ -32,6 +31,7 @@ def start_menu_input(error_message=""):
     print('Valid inputs')
     print('Login: login or l')
     print('Register: register or r')
+    print('Exit: exit or e')
     print()
 
     # User input
@@ -89,7 +89,8 @@ def user_menu_system(username):
             elif (len(user_input) == 2 and f'{user_input[0]} {user_input[1]}' in menu_actions_map.keys()):
                 current_menu.display_menu()
                 menu_actions_map.get(f'{user_input[0]} {user_input[1]}')()
-            elif (len(user_input) == 3 and f'{user_input[0]} {user_input[1]} {user_input[2]}' in goto_actions_map.keys()):
+            elif (
+                    len(user_input) == 3 and f'{user_input[0]} {user_input[1]} {user_input[2]}' in goto_actions_map.keys()):
                 current_menu = goto_actions_map.get(f'{user_input[0]} {user_input[1]} {user_input[2]}')
                 current_menu.display_menu()
             else:
@@ -98,6 +99,12 @@ def user_menu_system(username):
         else:
             current_menu.display_menu()
             print("Invalid User Input")
+
+
+def exit_program():
+    print('program closes')
+    connect.close()
+    exit()
 
 
 if __name__ == '__main__':
