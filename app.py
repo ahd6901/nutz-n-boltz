@@ -103,7 +103,7 @@ def user_menu_system(username):
 
 
 def exit_program():
-    print('program closes')
+    print('Program Closing')
 
 
 if __name__ == '__main__':
