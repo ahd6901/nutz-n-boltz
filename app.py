@@ -10,9 +10,7 @@ from access import *
 
 
 def run():
-
-
-    exec_schema_file('src\schema.sql')
+    #exec_schema_file('src\schema.sql')
     logged_in = start_menu()
     if logged_in[0]:
         user_menu_system(logged_in[1])
@@ -35,7 +33,6 @@ def start_menu_input(error_message=""):
     print('Valid inputs')
     print('Login: login or l')
     print('Register: register or r')
-    print('Exit: exit or e')
     print()
 
     # User input

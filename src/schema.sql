@@ -34,6 +34,7 @@ CREATE TABLE catalog_tools (
     FOREIGN KEY (tool_id) REFERENCES tools(tool_id)
 );
 
+grant delete, insert, references, select, trigger, truncate, update on tools, catalog_tools, users to nag6917, wam2134, ahd6901;
 
 INSERT INTO users(username, password, email, first_name, last_name, date_created,last_accessed) VALUES
  ('as_123','password','as@rit.edu','amelia', 'smith', '2020-01-02 20:19:09','2022-01-01 03:10:12'),
