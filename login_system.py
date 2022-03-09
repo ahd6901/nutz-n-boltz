@@ -1,7 +1,8 @@
+import datetime
+
 import utils
 from getpass import getpass
 from db_utils import *
-from datetime import date
 
 
 def login_system_input(user_input):
@@ -16,6 +17,7 @@ def login_system_input(user_input):
             logged_in = login("Successfully registered")
     return logged_in
 
+
 def login(error_message=''):
     utils.clear_console()
 
@@ -26,11 +28,11 @@ def login(error_message=''):
 
     # User input
     username = input('Enter your username: ').strip()
-    password = getpass('Enter your password: ').strip()
+    password = input('Enter your password: ').strip()  #Change to input() atm since getpass() prompt 'Enter your...' wasn't able to display on my end...
     valid_login = False
     # Check if valid login
     result = exec_get_one(
-                "SELECT COUNT(username) FROM users WHERE username='{0}' AND password='{1}'".format(username, password))
+        "SELECT COUNT(username) FROM users WHERE username='{0}' AND password='{1}'".format(username, password))
     if result[0] == 1:
         valid_login = True
         exec_commit("UPDATE users SET last_accessed=CURRENT_TIMESTAMP WHERE username='{0}'".format(username))
@@ -38,9 +40,8 @@ def login(error_message=''):
         print("Login successful!. Welcome back {0} {1} !".format(full_name[0], full_name[1]))
 
     if not valid_login:
-        return login('Invalid login')
+        return login('Invalid login credentials. Please Retry')
     return [valid_login, username]
-
 
 
 def register(error_message=''):
@@ -51,18 +52,17 @@ def register(error_message=''):
     print("Register")
     print()
 
-    # User input
-    username = input('Enter your username: ').strip()
-    # Check if username is available
-    # TODO Replace Trues with call to API to check if username is available
-    username_available = True
-    while (not username_available):
-        username = utils.reenter_invalid_input(
-            'Username', username, 'Enter your username: ', 'Username is not available')
-        username_available = True
-    if username == '' or username is None:
-        username = utils.reenter_invalid_input(
-            'Username', username, 'Enter your username: ')
+    # Get username (unique)
+    while True:
+        username = input('Enter your username: ').strip()
+        if username == '' or username is None:
+            print('Invalid username input. Please retry')
+            continue
+        username_found = exec_get_one("SELECT COUNT(username) FROM users WHERE username='{0}';".format(username))[0]
+        if username_found != 0:
+            print("username '{0}' is already taken. Please Retry".format(username))
+            continue
+        break
 
     first_name = input('Enter your first name: ').strip()
     # Check if first name is valid
@@ -76,23 +76,32 @@ def register(error_message=''):
         last_name = utils.reenter_invalid_input(
             'Last name', last_name, 'Enter your last name: ')
 
-    email = input('Enter your email: ').strip()
-    # Check if email is valid
-    while (not utils.validate_email_format(email)):
-        email = utils.reenter_invalid_input(
-            'Email', email, 'Enter your email: ')
+    # get email (unique)
+    while True:
+        email = input('Enter your email: ').strip()
+        if username == '' or username is None or not utils.validate_email_format(email):
+            print('Invalid email input. Please retry')
+            continue
+        username_found = exec_get_one("SELECT COUNT(email) FROM users WHERE email='{0}';".format(email))[0]
+        if username_found != 0:
+            print("email '{0}' is already taken.".format(email))
+            continue
+        break
 
-    password = getpass('Enter your password: ').strip()
-    password_confirmation = getpass('Confirm your password: ').strip()
+    password = input('Enter your password: ').strip()
+    password_confirmation = input('Confirm your password: ').strip()
     # check passwords entered match
     if password != password_confirmation:
         password = reenter_password()
 
     inputs_confirmed = confirm_input([username, first_name, last_name, email])
 
-    # TODO Replace False with call to API create user
-    user_created = False
-
+    now = datetime.datetime.now()
+    exec_commit("INSERT INTO users(username, password, email, first_name, last_name, date_created,last_accessed) "
+                "VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}');".format(username, password, email, first_name,
+                                                                             last_name,
+                                                                             now.strftime('%Y-%m-%d %H:%M:%S'),
+                                                                             now.strftime('%Y-%m-%d %H:%M:%S')))
     if inputs_confirmed:
         user_created = True
 
@@ -124,8 +133,8 @@ def reenter_password():
     print("Please reenter password")
 
     # User input
-    password = getpass('Enter your password: ').strip()
-    password_confirmation = getpass('Confirm your password: ').strip()
+    password = input('Enter your password: ').strip()
+    password_confirmation = input('Confirm your password: ').strip()
 
     if password != password_confirmation:
         return reenter_password()

@@ -35,15 +35,6 @@ CREATE TABLE catalog_tools (
 );
 
 
-
-CREATE PROCEDURE addUser(In username varchar, In password varchar, In email varchar, In first_name varchar, In last_name varchar, In date_created date,In last_accessed date)
-LANGUAGE sql
-AS $$
-INSERT INTO users(username, password, email, first_name, last_name, date_created,last_accessed)
-VALUES (username, password, email, first_name, last_name, date_created,last_accessed);
-$$;
-
-
 INSERT INTO users(username, password, email, first_name, last_name, date_created,last_accessed) VALUES
  ('as_123','password','as@rit.edu','amelia', 'smith', '2020-01-02 20:19:09','2022-01-01 03:10:12'),
  ('bj_94','pass_word','bj@gmail.com','bret', 'johnson', '2021-03-02 14:10:12', '2022-01-02 12:10:12'),
