@@ -1,6 +1,6 @@
 import psycopg2
 import os
-from sshtunnel import SSHTunnelForwarder
+from sshtunnel import SSHTunnelForwarder, BaseSSHTunnelForwarderError
 
 
 def connect():
@@ -10,7 +10,12 @@ def connect():
                                     ssh_username=authenticator[0],
                                     ssh_password=authenticator[1],
                                     remote_bind_address=('localhost', 5432))
-        server.start()
+        try:
+            server.start()
+        except (BaseSSHTunnelForwarderError):
+            print("Error Connecting to SSH Tunnel")
+            return 0
+
         params = {
             'database': 'p320_13',
             'user': authenticator[0],
@@ -25,34 +30,43 @@ def connect():
 def exec_schema_file(path):
     full_path = os.path.join(os.path.dirname(__file__), f'{path}')
     conn = connect()
-    cur = conn.cursor()
-    with open(full_path, 'r') as file:
-        cur.execute(file.read())
-    conn.commit()
-
+    if conn!=0 :
+        cur = conn.cursor()
+        with open(full_path, 'r') as file:
+            cur.execute(file.read())
+        conn.commit()
 
 def exec_get_one(sql, args={}):
     conn = connect()
-    cur = conn.cursor()
-    cur.execute(sql, args)
-    one = cur.fetchone()
-    conn.close()
-    return one
+    if conn!=0 :
+        cur = conn.cursor()
+        cur.execute(sql, args)
+        one = cur.fetchone()
+        conn.close()
+        return one
+    else: 
+        return
 
 
 def exec_get_all(sql, args={}):
     conn = connect()
-    cur = conn.cursor()
-    cur.execute(sql, args)
-    list_of_tuples = cur.fetchall()
-    conn.close()
-    return list_of_tuples
+    if conn!=0 :
+        cur = conn.cursor()
+        cur.execute(sql, args)
+        list_of_tuples = cur.fetchall()
+        conn.close()
+        return list_of_tuples
+    else: 
+        return
 
 
 def exec_commit(sql, args={}):
     conn = connect()
-    cur = conn.cursor()
-    result = cur.execute(sql, args)
-    conn.commit()
-    conn.close()
-    return result
+    if conn!=0 :
+        cur = conn.cursor()
+        result = cur.execute(sql, args)
+        conn.commit()
+        conn.close()
+        return result
+    else: 
+        return
