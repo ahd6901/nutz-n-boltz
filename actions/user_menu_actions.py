@@ -17,21 +17,21 @@ def action_input_map():
   }
   return input_map
 
-def show_stats(args):
+def show_stats(args, userid):
   print('Action: Show Stats')
   print(args)
 
-def inspect_available_tools(args):
+def inspect_available_tools(args, userid):
   #REQ: 10 a
   print('Action: inspect_available_tools')
   print(args)
 
-def inspect_lent_tools(args):
+def inspect_lent_tools(args, userid):
   # REQ:10 b
   print('Action: inspect_lent_tools')
   print(args)
 
-def inspect_borrowed_tools(args):
+def inspect_borrowed_tools(args, userid):
   # REQ:10 c
   print('Action: inspect_borrowed_tools')
   print(args)

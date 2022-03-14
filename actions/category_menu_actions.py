@@ -17,25 +17,25 @@ def action_input_map():
   }
   return input_map
 
-def create_category(args):
+def create_category(args, userid):
   # REQ:3
   print('Action: Create Category')
   print(args)
   tuples = exec_get_all('SELECT * FROM users')
   print(tuples)
 
-def remove_category(args):
+def remove_category(args, userid):
   # REQ:3
   print('Action: Remove Category')
   print(args)
 
-def display_categories(args):
+def display_categories(args, userid):
   # REQ:3
   print('Action: Display Categories')
   
   print(args)
 
-def add_category_to_tool(args):
+def add_category_to_tool(args, userid):
   # REQ:3
   print('Action: Add Category To Tool')
   print(args)
