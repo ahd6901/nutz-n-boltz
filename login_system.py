@@ -37,11 +37,12 @@ def login(error_message=''):
         valid_login = True
         exec_commit("UPDATE users SET last_accessed=CURRENT_TIMESTAMP WHERE username='{0}'".format(username))
         full_name = exec_get_one("SELECT first_name, last_name FROM users WHERE username='{0}'".format(username))
+        user_id = exec_get_one("SELECT user_id FROM users WHERE username={0}'".format(username))
         print("Login successful!. Welcome back {0} {1} !".format(full_name[0], full_name[1]))
 
     if not valid_login:
         return login('Invalid login credentials. Please Retry')
-    return [valid_login, username]
+    return [valid_login, username, user_id]
 
 
 def register(error_message=''):
