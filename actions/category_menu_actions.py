@@ -29,7 +29,7 @@ def create_category(args, userid):
     else:
       print(args, userid) # TODO Test Print Remove 
       rows = exec_commit(f'INSERT INTO categories(owner_id, name) VALUES ({userid}, {name})')
-      print(rows) # TODO Test Print Remove 
+      print('Insert',rows) # TODO Test Print Remove 
   elif (len(args) < 2):
     too_few_args(action)
   elif (len(args) > 2):
@@ -48,7 +48,7 @@ def remove_category(args, userid):
       print('Category Does Not Exist')
     else:
       rows = exec_commit(f'DELETE FROM categories WHERE owner_id = {userid} AND name = {name}')
-      print(rows) # TODO Test Print Remove 
+      print('Delete',rows) # TODO Test Print Remove 
   elif (len(args) < 2):
     too_few_args(action)
   elif (len(args) > 2):
@@ -72,61 +72,81 @@ def add_category_to_tool(args, userid):
   # REQ:3
   print('Action: Add Category To Tool')
   print(args, userid) # TODO Test Print Remove 
-
   action = args[0]
+  if (len(args) < 2):
+    too_few_args(action)
+    return
+
+  if (len(args) > 2):
+    too_many_args(action)
+    return
+
   if (len(args) == 2 and args[1].isdigit() and args[2]):
     tool_id = args[1]
     category_name = args[2]
     checking_tool = exec_get_one(f'SELECT tool_id FROM tools WHERE tool_id = {tool_id}')
-    if (len(checking_tool) > 0): 
-      category_id = exec_get_one(f'SELECT id FROM categories WHERE owner_id = {userid} AND name = {category_name}')[0]
-      if (len(category_id) > 0):
-        checking_category = exec_get_one(f'SELECT category_id FROM categorized_tools WHERE category_id = {category_id} AND tool_id = {tool_id}')
-        if (len(checking_category) > 0):
-          print(f'Tool ({tool_id}) Already Exists In Category {category_name}')
-        else:
-          rows = exec_commit(f'DELETE FROM categorized_tools WHERE category_id {category_id} AND tool_id = {tool_id})')
-          print(rows) # TODO Test Print Remove 
-      else:
-        print(f'Category {category_name} Not Found')
-    else:
+    print('Checking Tool', checking_tool)
+    if (len(checking_tool) == 0): 
       print(f'Tool Not Found with ID: {tool_id}')
-  elif (len(args) < 2):
-    too_few_args(action)
-  elif (len(args) > 2):
-    too_many_args(action)
+      return
+    
+    category_id = exec_get_one(f'SELECT id FROM categories WHERE owner_id = {userid} AND name = {category_name}')[0]
+    print('Category Id', category_id)
+    if (len(category_id) == 0):
+      print(f'Category {category_name} Not Found')
+      return
+
+    checking_category = exec_get_one(f'SELECT category_id FROM categorized_tools WHERE category_id = {category_id} AND tool_id = {tool_id}')
+    print('Checking Category', checking_category)
+    if (len(checking_category) > 0):
+      print(f'Tool ({tool_id}) Already Exists In Category {category_name}')
+      return
+    
+    rows = exec_commit(f'DELETE FROM categorized_tools WHERE category_id {category_id} AND tool_id = {tool_id})')
+    print('Delete',rows) # TODO Test Print Remove 
+
 
 def remove_category_from_tool(args, userid):
   # REQ:3
   print('Action: Remove Category From Tool')
-  print(args, userid)
 
   action = args[0]
+
+  if (len(args) < 2):
+    too_few_args(action)
+    return
+
+  if (len(args) > 2):
+    too_many_args(action)
+    return
+  
   if (len(args) == 2 and args[1].isdigit() and args[2]):
     tool_id = args[1]
     category_name = args[2]
     checking_tool = exec_get_one(f'SELECT tool_id FROM tools WHERE tool_id = {tool_id}')
-    if (len(checking_tool) > 0): 
-      category_id = exec_get_one(f'SELECT id FROM categories WHERE owner_id = {userid} AND name = {category_name}')[0]
-      if (len(category_id) > 0):
-        checking_category = exec_get_one(f'SELECT category_id FROM categorized_tools WHERE category_id = {category_id} AND tool_id = {tool_id}')
-        if (len(checking_category) > 0):
-          print(f'Category {category_name} Not Found On Tool with ID: {tool_id}')
-        else:
-          category_id = checking_category[0]
-          rows = exec_commit(f'INSERT INTO categorized_tools(category_id, tool_id) VALUES ({category_id}, {tool_id})')
-          print(rows)
-      else:
-        print(f'Category {category_name} Not Found')
-    else:
+    print('Checking Tool', checking_tool)
+    if (len(checking_tool) == 0): 
       print(f'Tool Not Found with ID: {tool_id}')
-  elif (len(args) < 2):
-    too_few_args(action)
-  elif (len(args) > 2):
-    too_many_args(action)
+      return
+    
+    category_id = exec_get_one(f'SELECT id FROM categories WHERE owner_id = {userid} AND name = {category_name}')[0]
+    print('Category Id', category_id)
+    if (len(category_id) == 0):
+      print(f'Category {category_name} Not Found')
+      return
+    
+    checking_category = exec_get_one(f'SELECT category_id FROM categorized_tools WHERE category_id = {category_id} AND tool_id = {tool_id}')
+    print('Checking Category', checking_category)
+    if (len(checking_category) == 0):
+      print(f'Category {category_name} Not Found On Tool with ID: {tool_id}')
+      return
+    
+    category_id = checking_category[0]
+    rows = exec_commit(f'INSERT INTO categorized_tools(category_id, tool_id) VALUES ({category_id}, {tool_id})')
+    print('Insert',rows)
 
 def too_many_args(action):
-  print('Too Many Arguments')
+  print(f'Too many Arguments')
   print(action_input_map().get(action))
 
 def too_few_args(action):
