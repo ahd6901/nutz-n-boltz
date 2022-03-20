@@ -13,7 +13,7 @@ def run():
     #exec_schema_file('src\schema.sql')
     logged_in = start_menu()
     if logged_in[0]:
-        user_menu_system(logged_in[1])
+        user_menu_system(logged_in[1],logged_in[2])
 
 
 def start_menu():
@@ -47,10 +47,10 @@ def start_menu_input(error_message=""):
         return start_menu_input(f'Invalid Input: "{user_input}"')
 
 
-def user_menu_system(username):
+def user_menu_system(username, user_id):
     utils.clear_console()
 
-    print(f'Welcome back {username}')
+    print(f'Welcome back {username} ({user_id})')
 
     menus = menu_sys.create_menus()
     current_menu = menus.get('User Menu')
@@ -76,23 +76,23 @@ def user_menu_system(username):
             'display menus': menu_sys.display_menus,
             'display actions': current_menu.display_actions
         }
-        user_input = str(input(':: ')).strip().lower().split()
-
-        if (len(user_input) == 1 and user_input[0] == 'logout'):
+        user_input = str(input(':: ')).strip()
+        split_user_input = user_input.split()
+        lower_user_input = user_input.lower().split()
+        if (len(split_user_input) == 1 and lower_user_input[0] == 'logout'):
             logout = True
             break
 
         utils.clear_console()
-        if (len(user_input) > 0):
-            if (user_input[0] in current_menu.get_actions()):
+        if (len(split_user_input) > 0):
+            if (lower_user_input[0] in current_menu.get_actions()):
                 current_menu.display_menu()
-                current_menu.get_action(user_input[0])(user_input)
-            elif (len(user_input) == 2 and f'{user_input[0]} {user_input[1]}' in menu_actions_map.keys()):
+                current_menu.get_action(lower_user_input[0])(split_user_input, user_id)
+            elif (len(split_user_input) == 2 and f'{lower_user_input[0]} {lower_user_input[1]}' in menu_actions_map.keys()):
                 current_menu.display_menu()
-                menu_actions_map.get(f'{user_input[0]} {user_input[1]}')()
-            elif (
-                    len(user_input) == 3 and f'{user_input[0]} {user_input[1]} {user_input[2]}' in goto_actions_map.keys()):
-                current_menu = goto_actions_map.get(f'{user_input[0]} {user_input[1]} {user_input[2]}')
+                menu_actions_map.get(f'{lower_user_input[0]} {lower_user_input[1]}')()
+            elif (len(split_user_input) == 3 and f'{lower_user_input[0]} {lower_user_input[1]} {lower_user_input[2]}' in goto_actions_map.keys()):
+                current_menu = goto_actions_map.get(f'{lower_user_input[0]} {lower_user_input[1]} {lower_user_input[2]}')
                 current_menu.display_menu()
             else:
                 current_menu.display_menu()

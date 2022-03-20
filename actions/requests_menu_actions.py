@@ -16,17 +16,17 @@ def action_input_map():
   }
   return input_map
 
-def respond_to_request(args):
+def respond_to_request(args, userid):
   # REQ:8
   print('Action: Respond to Request')
   print(args)
 
-def request_tool(args):
+def request_tool(args, userid):
   # REQ:6
   print('Action: Request Tool')
   print(args)
 
-def manage_requests(args):
+def manage_requests(args, userid):
   # REQ:7
   print('Action: Request Tool')
   print(args)

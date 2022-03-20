@@ -18,20 +18,20 @@ def action_input_map():
     return input_map
 
 
-def show_stats(args):
+def show_stats(args, userid):
     print('Action: Show Stats')
     print(args)
 
 
 # The list of available tools must be ordered by name alphabetically
-def inspect_available_tools(args):
+def inspect_available_tools(args, userid):
     # REQ: 10 a
     print('Action: inspect_available_tools')
     tuples = exec_get_all('SELECT name FROM tools WHERE available is True ORDER BY name ASC;')
     [print(t[0]) for t in tuples]
 
 
-def inspect_lent_tools(args):
+def inspect_lent_tools(args, userid):
     # REQ:10 b
     print('Action: inspect_lent_tools')
 
@@ -58,7 +58,7 @@ def inspect_lent_tools(args):
                                                                              str(tup[4])))
 
 
-def inspect_borrowed_tools(args):
+def inspect_borrowed_tools(args, userid):
     # REQ:10 c
     print('Action: inspect_borrowed_tools')
     tuples = exec_get_all("SELECT r.tool_id, t.name, u.username as tool_owner, r.overdue, r.date_borrowed "

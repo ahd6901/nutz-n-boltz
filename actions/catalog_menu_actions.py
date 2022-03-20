@@ -19,32 +19,32 @@ def action_input_map():
   }
   return input_map
 
-def add_tool(args):
+def add_tool(args, userid):
   # REQ:2
   print('Action: Add Tool')
-  print(args)
+  print(args, userid)
 
-def sort_tools(args):
+def sort_tools(args, userid):
   # REQ:5
   print('Action: Sort Tools')
   print(args)
 
-def remove_tool(args):
+def remove_tool(args, userid):
   # REQ:2 / 12
   print('Action: Remove Tool')
   print(args)
 
-def update_tool(args):
+def update_tool(args, userid):
   # REQ:2
   print('Action: Update Tool')
   print(args)
 
-def search_tool(args):
+def search_tool(args, userid):
   # REQ:4
   print('Action: Search Tool')
   print(args)
 
-def return_tool(args):
+def return_tool(args, userid):
   # REQ: 11
   print('Action: Return Tool')
   print(args)
