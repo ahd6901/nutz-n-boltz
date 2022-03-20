@@ -79,7 +79,6 @@ def display_categories(args, userid):
 def add_category_to_tool(args, userid):
   # REQ:3
   print('Action: Add Category To Tool')
-  print(args, userid) # TODO Test Print Remove 
   action = args[0]
   if (len(args) < 3):
     too_few_args(action)
