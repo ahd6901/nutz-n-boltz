@@ -10,6 +10,7 @@ def action_input_map():
         'goto requests menu': 'goto requests menu',
         'goto category menu': 'goto category menu',
         'goto catalog menu': 'goto catalog menu',
+        'display_dashboard': 'display_dashboard',
         'show_stats': 'show_stats',
         'inspect_available_tools': 'inspect_available_tools',
         'inspect_lent_tools': 'inspect_lent_tools',
@@ -20,10 +21,32 @@ def action_input_map():
 
 def show_stats(args, userid):
     print('Action: Show Stats')
-    print(args)
+    print('Their top 10 most frequently lent tools (percentage of time lent vs available) and the average lent time:')
+    borrowed_count_tuples = exec_get_all("SELECT r.tool_id, t.name, COUNT(r.tool_id) FROM user_tool_requests r "
+                                         "INNER JOIN tools t on t.tool_id = r.tool_id WHERE r.requesting_user_id={0} "
+                                         "GROUP BY r.tool_id, t.name ORDER BY COUNT(r.tool_id) DESC LIMIT 10;".format(
+        userid))
+    print('Their top 10 most frequently borrowed tools:')
+    [print('id:', t[0], ' ', 'name:', t[1]) for t in borrowed_count_tuples]
 
 
-# The list of available tools must be ordered by name alphabetically
+def display_dashboard(args, userid):
+    print('Action: display_dashboard')
+    count_available = exec_get_one(
+        'SELECT COUNT(t.tool_id) FROM tools t INNER JOIN catalog_tools c ON t.tool_id = c.tool_id '
+        'WHERE t.available is True AND c.owner_id={0};'.format(userid))
+    print("Number of tools available from your catalog:", count_available[0])
+    count_lent = exec_get_one("SELECT count(r.tool_id) FROM user_tool_requests r JOIN catalog_tools c on r.tool_id = "
+                              "c.tool_id WHERE c.owner_id={0} AND r.status ='accepted' AND r.date_borrowed is not "
+                              "null;".format(userid))
+    print('Number of lent tools:', count_lent[0])  # tools cho nguoi ta muon
+    count_borrowed = exec_get_one("SELECT COUNT(DISTINCT(r.tool_id)) FROM user_tool_requests r WHERE "
+                                  "r.requesting_user_id={0} AND r.status ='accepted' AND r.date_borrowed is not null;".format(
+        userid))
+    print('Number of borrowed tools:', count_borrowed[0])  # tools di muon from nguoi ta
+
+
+
 def inspect_available_tools(args, userid):
     # REQ: 10 a
     print('Action: inspect_available_tools')
@@ -43,7 +66,6 @@ def inspect_lent_tools(args, userid):
         "WHERE r.status ='accepted' AND r.date_borrowed is not null "
         "ORDER BY r.date_borrowed ASC;")
 
-
     for tup in tuples:
         # if the tools hasn't been returned=> current holder is the borrower
         if tup[5]:
@@ -54,8 +76,8 @@ def inspect_lent_tools(args, userid):
             current_holder = tup[2]
         print(
             "Tool id:{0} | current holder:{1} | overdue:{2} | date borrowed:{3} ".format(tup[0], current_holder,
-                                                                             str(tup[3]),
-                                                                             str(tup[4])))
+                                                                                         str(tup[3]),
+                                                                                         str(tup[4])))
 
 
 def inspect_borrowed_tools(args, userid):
@@ -68,5 +90,6 @@ def inspect_borrowed_tools(args, userid):
                           "INNER JOIN tools t on t.tool_id = r.tool_id "
                           "WHERE r.status='accepted' AND r.date_borrowed is not null "
                           "ORDER BY r.date_borrowed ASC;")
-    [print("Tool id:{0} | owner:{1} | overdue:{2} | date borrowed:{3} ".format(t[0], t[2], str(t[3]), str(t[4]))) for t in
+    [print("Tool id:{0} | owner:{1} | overdue:{2} | date borrowed:{3} ".format(t[0], t[2], str(t[3]), str(t[4]))) for t
+     in
      tuples]
