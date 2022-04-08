@@ -20,31 +20,57 @@ def action_input_map():
 
 
 def show_stats(args, userid):
+    #testing user: Sn4ppy_dozerSambur
     print('Action: Show Stats')
-    print('Their top 10 most frequently lent tools (percentage of time lent vs available) and the average lent time:')
+    print("===Your top 10 most frequently lent tools and each's average lent time:")
+    ten_most_lent = exec_get_all("SELECT t.tool_id, t.name,count(r.tool_id) FROM user_tool_requests r "
+                                 "INNER JOIN catalog_tools c on r.tool_id = c.tool_id "
+                                 "INNER JOIN tools t on t.tool_id = r.tool_id "
+                                 "WHERE c.owner_id={0} and r.status='accepted' "
+                                 "GROUP BY t.tool_id "
+                                 "ORDER BY COUNT(r.tool_id) DESC "
+                                 "LIMIT 10;".format(userid))
+    if len(ten_most_lent) == 0:
+        print("You haven't lent any tools")
+    else:
+        for t in ten_most_lent:
+            avg_lent_time = exec_get_one(
+                "SELECT avg(num_days) FROM "
+                "("
+                " SELECT (r.expected_return_date-r.date_required) as num_days FROM user_tool_requests r "
+                " WHERE r.tool_id={0} AND r.status='accepted'"
+                ")"
+                "as new_col;".format(t[0]))
+            print('tool id:', t[0], ', ', 'tool name:', t[1], ', Average lent time:', int(avg_lent_time[0]), 'days')
+
     borrowed_count_tuples = exec_get_all("SELECT r.tool_id, t.name, COUNT(r.tool_id) FROM user_tool_requests r "
                                          "INNER JOIN tools t on t.tool_id = r.tool_id WHERE r.requesting_user_id={0} "
                                          "GROUP BY r.tool_id, t.name ORDER BY COUNT(r.tool_id) DESC LIMIT 10;".format(
         userid))
-    print('Their top 10 most frequently borrowed tools:')
-    [print('id:', t[0], ' ', 'name:', t[1]) for t in borrowed_count_tuples]
+    print('===Your top 10 most frequently borrowed tools:')
+    if len(borrowed_count_tuples) == 0:
+        print("You haven't borrowed any tools")
+    else:
+        [print('tool id:', t[0], ' ', 'name:', t[1]) for t in borrowed_count_tuples]
 
 
 def display_dashboard(args, userid):
     print('Action: display_dashboard')
     count_available = exec_get_one(
-        'SELECT COUNT(t.tool_id) FROM tools t INNER JOIN catalog_tools c ON t.tool_id = c.tool_id '
+        'SELECT COUNT(t.tool_id) '
+        'FROM tools t INNER JOIN catalog_tools c ON t.tool_id = c.tool_id '
         'WHERE t.available is True AND c.owner_id={0};'.format(userid))
     print("Number of tools available from your catalog:", count_available[0])
-    count_lent = exec_get_one("SELECT count(r.tool_id) FROM user_tool_requests r JOIN catalog_tools c on r.tool_id = "
-                              "c.tool_id WHERE c.owner_id={0} AND r.status ='accepted' AND r.date_borrowed is not "
-                              "null;".format(userid))
-    print('Number of lent tools:', count_lent[0])  # tools cho nguoi ta muon
-    count_borrowed = exec_get_one("SELECT COUNT(DISTINCT(r.tool_id)) FROM user_tool_requests r WHERE "
-                                  "r.requesting_user_id={0} AND r.status ='accepted' AND r.date_borrowed is not null;".format(
-        userid))
-    print('Number of borrowed tools:', count_borrowed[0])  # tools di muon from nguoi ta
+    count_lent = exec_get_one("SELECT count(distinct(r.tool_id)) "
+                              "FROM user_tool_requests r JOIN catalog_tools c on r.tool_id = c.tool_id "
+                              "WHERE c.owner_id={0} AND r.status ='accepted';".format(userid))
+    print('Number tools you have lent:', count_lent[0])
 
+    count_borrowed = exec_get_one("SELECT COUNT(DISTINCT(r.tool_id)) "
+                                  "FROM user_tool_requests r "
+                                  "WHERE r.requesting_user_id={0} AND r.status ='accepted' ;".format(
+        userid))
+    print('Number tools you have borrowed:', count_borrowed[0])
 
 
 def inspect_available_tools(args, userid):
