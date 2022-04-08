@@ -44,7 +44,7 @@ def respond_to_request(args, userid):
 
   if reqid in requesting_users:
     try:
-      exec_commit("UPDATE user_tool_requests SET status = '{0}', date_status_changed = '{1}' WHERE requesting_user_id = '{2}'".format(status,d,reqid))
+      exec_commit("UPDATE user_tool_requests SET status = '{0}', date_status_changed = '{1}', date_borrowed = '{2}' WHERE requesting_user_id = '{3}'".format(status,d,d,reqid))
       print("Updated Status")
     except Exception as e:
       print("Error updating request", e)
