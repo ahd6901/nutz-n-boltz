@@ -20,7 +20,6 @@ def action_input_map():
 
 
 def show_stats(args, userid):
-    #testing user: Sn4ppy_dozerSambur
     print('Action: Show Stats')
     print("===Your top 10 most frequently lent tools and each's average lent time:")
     ten_most_lent = exec_get_all("SELECT t.tool_id, t.name,count(r.tool_id) FROM user_tool_requests r "
@@ -37,8 +36,9 @@ def show_stats(args, userid):
             avg_lent_time = exec_get_one(
                 "SELECT avg(num_days) FROM "
                 "("
-                " SELECT (r.expected_return_date-r.date_required) as num_days FROM user_tool_requests r "
-                " WHERE r.tool_id={0} AND r.status='accepted'"
+                "SELECT coalesce(r.date_returned, CURRENT_DATE)-r.date_borrowed AS num_days "
+                "FROM user_tool_requests r "
+                "WHERE r.tool_id={0} AND r.status='accepted'"
                 ")"
                 "as new_col;".format(t[0]))
             print('tool id:', t[0], ', ', 'tool name:', t[1], ', Average lent time:', int(avg_lent_time[0]), 'days')
